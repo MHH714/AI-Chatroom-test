@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Simple Chatroom</title>
+<style>
+body {
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    margin: 0;
+}
+
+#chat-area {
+    flex-grow: 1;
+    border: 1px solid #ccc;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+#message-input {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #ccc;
+}
+
+#message {
+    flex-grow: 1;
+    padding: 5px;
+}
+
+#send-button {
+    padding: 5px 10px;
+}
+
+#username-input {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+}
+
+#username-input input {
+    margin-right: 10px;
+    padding: 5px;
+}
+
+#username-input button {
+    padding: 5px 10px;
+}
+</style>
+</head>
+<body>
+
+<div id="username-input">
+    <input type="text" id="username" placeholder="Enter your username">
+    <button id="set-username">Set Username</button>
+</div>
+
+<div id="chat-area"></div>
+
+<div id="message-input">
+    <input type="text" id="message" placeholder="Type your message...">
+    <button id="send-button">Send</button>
+</div>
+
+<script>
+let username = null;
+const chatArea = document.getElementById('chat-area');
+const messageInput = document.getElementById('message');
+const sendButton = document.getElementById('send-button');
+const usernameInput = document.getElementById('username');
+const setUsernameButton = document.getElementById('set-username');
+
+function appendMessage(user, message) {
+    const messageElement = document.createElement('div');
+    messageElement.textContent = `${user}: ${message}`;
+    chatArea.appendChild(messageElement);
+    chatArea.scrollTop = chatArea.scrollHeight; // Scroll to bottom
+}
+
+function sendMessage() {
+    if (!username) {
+        alert("Please set your username first.");
+        return;
+    }
+    const message = messageInput.value;
+    if (message.trim() !== '') {
+        appendMessage(username, message);
+        messageInput.value = ''; // Clear input
+    }
+}
+
+sendButton.addEventListener('click', sendMessage);
+messageInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        sendMessage();
+    }
+});
+
+setUsernameButton.addEventListener('click', () => {
+    const newUsername = usernameInput.value.trim();
+    if (newUsername !== '') {
+        username = newUsername;
+        document.getElementById('username-input').style.display = 'none';
+        appendMessage("System", `${username} has joined the chat.`);
+    } else {
+        alert("Username cannot be empty.");
+    }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatroom</title>
+    <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-database.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        #chat { width: 80%; max-width: 500px; margin: auto; border: 1px solid #ddd; padding: 10px; height: 300px; overflow-y: scroll; }
+        #messageInput { width: 80%; padding: 5px; }
+    </style>
+</head>
+<body>
+
+    <h2>Simple Chatroom</h2>
+    <div id="usernameDiv">
+        <input type="text" id="username" placeholder="Enter your username">
+        <button onclick="setUsername()">Join</button>
+    </div>
+
+    <div id="chatroom" style="display: none;">
+        <div id="chat"></div>
+        <input type="text" id="messageInput" placeholder="Type a message">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        // Firebase configuration (replace with your own)
+        const firebaseConfig = YOUR_FIREBASE_CONFIG;
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        let username = "";
+
+        function setUsername() {
+            username = document.getElementById("username").value.trim();
+            if (username) {
+                document.getElementById("usernameDiv").style.display = "none";
+                document.getElementById("chatroom").style.display = "block";
+            }
+        }
+
+        function sendMessage() {
+            const message = document.getElementById("messageInput").value.trim();
+            if (message) {
+                db.ref("messages").push({ user: username, text: message });
+                document.getElementById("messageInput").value = "";
+            }
+        }
+
+        db.ref("messages").on("child_added", snapshot => {
+            const data = snapshot.val();
+            const chat = document.getElementById("chat");
+            chat.innerHTML += `<p><strong>${data.user}:</strong> ${data.text}</p>`;
+            chat.scrollTop = chat.scrollHeight;
+        });
+    </script>
+
+</body>
+</html>
